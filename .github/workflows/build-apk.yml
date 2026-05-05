@@ -1,0 +1,38 @@
+name: Build Guardian SMS APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Verificar Flutter
+        run: flutter --version
+
+      - name: Instalar dependencias
+        run: flutter pub get
+
+      - name: Analizar proyecto
+        run: flutter analyze
+
+      - name: Construir APK debug
+        run: flutter build apk --debug
+
+      - name: Subir APK como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GuardianSMS-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
